@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  db:
+    image: postgres:9.6
+  rabbit:
+    image: "rabbitmq:3"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+      - rabbit
+    environment:
+      - BOT_TOKEN=666193593:AAEtUxj0Dy-2i7511Pr9tHJECjANOYJCWbA
