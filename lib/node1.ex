@@ -1,18 +1,24 @@
 defmodule Node1 do
-  @moduledoc """
-  Documentation for Node1.
-  """
+  use Application
 
-  @doc """
-  Hello world.
+  def start(_type, _args) do
+    import Supervisor.Spec, warn: false
 
-  ## Examples
+    children = [
+      worker(Node1.Poller, [])
+    ]
 
-      iex> Node1.hello()
-      :world
+    opts = [strategy: :one_for_one, name: Node1.Supervisor]
+    Supervisor.start_link(children, opts)
+  end
 
-  """
-  def hello do
-    :world
+  def send_message(chat_id, text) do
+    case Nadia.send_message(chat_id, text) do
+      {:ok, _result} ->
+        :ok
+
+      {:error, %Nadia.Model.Error{reason: "Please wait a little"}} ->
+        :wait
+    end
   end
 end
