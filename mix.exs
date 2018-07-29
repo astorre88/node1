@@ -23,6 +23,7 @@ defmodule Node1.MixProject do
   defp deps do
     [
       {:nadia, "~> 0.4.4"},
+      {:amqp, "~> 0.2.3"},
       {:distillery, "~> 1.5", runtime: false}
     ]
   end

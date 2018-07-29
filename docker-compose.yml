@@ -4,7 +4,10 @@ services:
   db:
     image: postgres:9.6
   rabbit:
-    image: "rabbitmq:3"
+    image: "rabbitmq:3-management"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
   app:
     build:
       context: .
@@ -14,3 +17,4 @@ services:
       - rabbit
     environment:
       - BOT_TOKEN=666193593:AAEtUxj0Dy-2i7511Pr9tHJECjANOYJCWbA
+      - TELEGRAM_CHANNEL_ID:-1001165372292
