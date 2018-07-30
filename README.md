@@ -1,21 +1,22 @@
 # Node1
 
-**TODO: Add description**
+This application is one part of the telegram<->web_front system.
+It receives messages from custom Telegram channel and sends them to rabbit and vice versa.
+Also this project contains docker-compose.yml which starts whole system.
 
-## Installation
+## Usage
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `node1` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:node1, "~> 0.1.0"}
-  ]
-end
+Build and start system
+```bash
+$ BOT_TOKEN=xxx TELEGRAM_CHANNEL_ID=xxx SECRET_KEY_BASE=xxx docker-compose -f docker-compose.yml up -d --build
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/node1](https://hexdocs.pm/node1).
+Run migrations
+```bash
+$ docker exec -it $(docker ps | grep node1_app2_1 | awk '{print $1}') bin/node2 migrate
+```
 
+Stop
+```bash
+$ BOT_TOKEN=xxx TELEGRAM_CHANNEL_ID=xxx SECRET_KEY_BASE=xxx docker-compose -f docker-compose.yml down
+```

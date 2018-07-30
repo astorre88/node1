@@ -1,0 +1,24 @@
+# .dockerignore
+.git
+
+# Mix artifacts
+_build
+deps
+*.ez
+tmp
+
+# Generate on crash by the VM
+erl_crash.dump
+
+# Static artifacts
+node_modules
+
+# Docker artifacts
+Dockerfile*
+docker-compose*
+
+# local configs
+config/*.local.exs
+
+# Postgres volume
+/postgres-data

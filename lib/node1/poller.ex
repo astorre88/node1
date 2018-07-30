@@ -4,6 +4,9 @@ defmodule Node1.Poller do
   use GenServer
   use AMQP
 
+  @mq_url   "amqp://guest:guest@rabbit"
+  @exchange "node2_exchange"
+
   defstruct chan: %{}, offset: 0
 
   # API
@@ -39,7 +42,7 @@ defmodule Node1.Poller do
   end
 
   defp try_connect do
-    case Connection.open("amqp://guest:guest@localhost") do
+    case Connection.open(@mq_url) do
       {:ok, conn} ->
         conn
       {:error, reason} ->
@@ -89,6 +92,6 @@ defmodule Node1.Poller do
   defp send_to_mq_channel(message, chan) do
     text = message.channel_post.text
     Logger.log(:info, text)
-    Basic.publish chan, "node2_exchange", "", text
+    Basic.publish chan, @exchange, "", text
   end
 end

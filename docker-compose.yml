@@ -1,8 +1,13 @@
-version: '2'
+version: '3'
 
 services:
   db:
     image: postgres:9.6
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=node2
   rabbit:
     image: "rabbitmq:3-management"
     ports:
@@ -16,5 +21,21 @@ services:
       - db
       - rabbit
     environment:
-      - BOT_TOKEN=666193593:AAEtUxj0Dy-2i7511Pr9tHJECjANOYJCWbA
-      - TELEGRAM_CHANNEL_ID:-1001165372292
+      - BOT_TOKEN=$BOT_TOKEN
+      - TELEGRAM_CHANNEL_ID=$TELEGRAM_CHANNEL_ID
+  app2:
+    build:
+      context: ../../phoenix/node2
+      dockerfile: Dockerfile
+    ports:
+      - "4000:80"
+    depends_on:
+      - db
+      - rabbit
+      - app
+    environment:
+      - URL_HOST=localhost
+      - URL_PORT=80
+      - PORT=80
+      - DATABASE_URL=postgres://postgres:postgres@db/node2?pool_size=15
+      - SECRET_KEY_BASE=$SECRET_KEY_BASE
