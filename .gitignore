@@ -25,4 +25,4 @@ node1-*.tar
 /config/*.local.exs
 
 # Postgres volume
-/postgres-data/
+/postgres-data
