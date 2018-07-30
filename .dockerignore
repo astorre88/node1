@@ -19,6 +19,3 @@ docker-compose*
 
 # local configs
 config/*.local.exs
-
-# Postgres volume
-/postgres-data

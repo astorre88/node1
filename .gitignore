@@ -23,3 +23,6 @@ erl_crash.dump
 node1-*.tar
 
 /config/*.local.exs
+
+# Postgres volume
+/postgres-data/

@@ -16,15 +16,7 @@ defmodule Node1.AmqpConsumer do
   @error_key      "x-dead-letter-routing-key"
 
   def init(_opts) do
-    conn = try_connect()
-    {:ok, chan} = Channel.open(conn)
-    setup_queue(chan)
-
-    # Limit unacknowledged messages to 10
-    :ok = Basic.qos(chan, prefetch_count: 10)
-    # Register the GenServer process as a consumer
-    {:ok, _consumer_tag} = Basic.consume(chan, @queue)
-    {:ok, chan}
+    rabbitmq_connect
   end
 
   # Confirmation sent by the broker after registering this process as a consumer
@@ -47,15 +39,27 @@ defmodule Node1.AmqpConsumer do
     {:noreply, chan}
   end
 
-  defp try_connect do
+  def handle_info({:DOWN, _, :process, _pid, _reason}, _) do
+    {:ok, chan} = rabbitmq_connect
+    {:noreply, chan}
+  end
+
+  defp rabbitmq_connect do
     case Connection.open(@mq_url) do
       {:ok, conn} ->
-        conn
-
-      {:error, reason} ->
-        Logger.log(:error, "failed for #{inspect(reason)}")
-        :timer.sleep(5000)
-        try_connect()
+        # Get notifications when the connection goes down
+        Process.monitor(conn.pid)
+        # Everything else remains the same
+        {:ok, chan} = Channel.open(conn)
+        setup_queue(chan)
+        Basic.qos(chan, prefetch_count: 10)
+        {:ok, _consumer_tag} = Basic.consume(chan, @queue)
+        {:ok, chan}
+  
+      {:error, _} ->
+        # Reconnection loop
+        :timer.sleep(10000)
+        rabbitmq_connect
     end
   end
 
