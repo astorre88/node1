@@ -4,7 +4,7 @@ defmodule Node1.Poller do
   use GenServer
   use AMQP
 
-  @mq_url   "amqp://guest:guest@rabbit"
+  @mq_url Application.get_env(:amqp, :mq_url)
   @exchange "node2_exchange"
 
   defstruct chan: %{}, offset: 0
@@ -45,9 +45,10 @@ defmodule Node1.Poller do
     case Connection.open(@mq_url) do
       {:ok, conn} ->
         conn
+
       {:error, reason} ->
-        Logger.log(:error, "failed for #{inspect reason}")
-        :timer.sleep 5000
+        Logger.log(:error, "failed for #{inspect(reason)}")
+        :timer.sleep(5000)
         try_connect()
     end
   end
@@ -56,10 +57,11 @@ defmodule Node1.Poller do
 
   defp process_messages({:ok, results}, chan) do
     telegram_channel_id = Application.get_env(:nadia, :telegram_channel_id)
+
     last_id =
       results
       |> Enum.filter(fn message ->
-        Integer.to_string(message.channel_post.chat.id) == telegram_channel_id
+        Integer.to_string(message_struct(message).chat.id) == telegram_channel_id
       end)
       |> Enum.map(fn %{update_id: id} = message ->
         message
@@ -67,11 +69,12 @@ defmodule Node1.Poller do
 
         id
       end)
-      |> List.last() # TODO: Change to efficient method
+      |> List.last()
 
     case last_id do
       nil ->
         -1
+
       _ ->
         last_id
     end
@@ -90,8 +93,18 @@ defmodule Node1.Poller do
   defp send_to_mq_channel(nil, _chan), do: Logger.log(:info, "nil")
 
   defp send_to_mq_channel(message, chan) do
-    text = message.channel_post.text
+    text = message_struct(message).text
     Logger.log(:info, text)
-    Basic.publish chan, @exchange, "", text
+    Basic.publish(chan, @exchange, "", text)
+  end
+
+  defp message_struct(message) do
+    case message.channel_post do
+      nil ->
+        message.message
+
+      post ->
+        post
+    end
   end
 end

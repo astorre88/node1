@@ -8,12 +8,12 @@ defmodule Node1.AmqpConsumer do
     GenServer.start_link(__MODULE__, [], [])
   end
 
-  @mq_url         "amqp://guest:guest@rabbit"
-  @exchange       "node1_exchange"
-  @queue          "node1_queue"
-  @queue_error    "#{@queue}_error"
+  @mq_url Application.get_env(:amqp, :mq_url)
+  @exchange "node1_exchange"
+  @queue "node1_queue"
+  @queue_error "#{@queue}_error"
   @error_exchange "x-dead-letter-exchange"
-  @error_key      "x-dead-letter-routing-key"
+  @error_key "x-dead-letter-routing-key"
 
   def init(_opts) do
     rabbitmq_connect
@@ -55,7 +55,7 @@ defmodule Node1.AmqpConsumer do
         Basic.qos(chan, prefetch_count: 10)
         {:ok, _consumer_tag} = Basic.consume(chan, @queue)
         {:ok, chan}
-  
+
       {:error, _} ->
         # Reconnection loop
         :timer.sleep(10000)
