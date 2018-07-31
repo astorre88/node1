@@ -14,6 +14,8 @@ defmodule Node1.Poller do
 
   defstruct chan: %{}, offset: 0
 
+  @type t :: %Node1.Poller{}
+
   # API
 
   def start_link do
@@ -33,6 +35,7 @@ defmodule Node1.Poller do
     {:ok, %__MODULE__{chan: chan, offset: 0}}
   end
 
+  @spec handle_cast(atom(), Node1.Poller.t()) :: {:noreply, Node1.Poller.t()}
   def handle_cast(:update, poller) do
     new_offset =
       Nadia.get_updates(offset: poller.offset)
@@ -60,6 +63,7 @@ defmodule Node1.Poller do
 
   defp process_messages({:ok, []}, _chan), do: -1
 
+  @spec process_messages({:ok, list()}, Node1.Poller.t()) :: integer()
   defp process_messages({:ok, results}, chan) do
     telegram_channel_id = Application.get_env(:nadia, :telegram_channel_id)
 

@@ -26,6 +26,8 @@ defmodule Node1.MixProject do
       {:amqp, "~> 0.2.3"},
       {:distillery, "~> 1.5", runtime: false},
       {:exvcr, "~> 0.10.1", only: [:dev, :test]},
+
+      # Linters and checkers
       {:credo, "~> 0.10.0", only: [:dev, :test], runtime: false}
     ]
   end

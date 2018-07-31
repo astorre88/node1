@@ -1,7 +1,7 @@
 defmodule Node1.AmqpConsumer do
   @moduledoc """
   RabbitMQ consumer process. Consumes rabbit queue messages
-  and send them to Telegram channel
+  and send them to Telegram channel.
   """
 
   require Logger
@@ -49,6 +49,7 @@ defmodule Node1.AmqpConsumer do
     {:noreply, chan}
   end
 
+  @spec rabbitmq_connect() :: {:ok, %Channel{}}
   defp rabbitmq_connect do
     case Connection.open(@mq_url) do
       {:ok, conn} ->
