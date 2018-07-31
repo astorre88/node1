@@ -1,4 +1,9 @@
 defmodule Node1.Poller do
+  @moduledoc """
+  Long-polling process. Consumes Telegram channel messages
+  and send them to rabbit queue.
+  """
+
   require Logger
 
   use GenServer

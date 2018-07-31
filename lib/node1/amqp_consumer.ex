@@ -1,4 +1,9 @@
 defmodule Node1.AmqpConsumer do
+  @moduledoc """
+  RabbitMQ consumer process. Consumes rabbit queue messages
+  and send them to Telegram channel
+  """
+
   require Logger
 
   use GenServer
@@ -16,7 +21,7 @@ defmodule Node1.AmqpConsumer do
   @error_key "x-dead-letter-routing-key"
 
   def init(_opts) do
-    rabbitmq_connect
+    rabbitmq_connect()
   end
 
   # Confirmation sent by the broker after registering this process as a consumer
@@ -40,7 +45,7 @@ defmodule Node1.AmqpConsumer do
   end
 
   def handle_info({:DOWN, _, :process, _pid, _reason}, _) do
-    {:ok, chan} = rabbitmq_connect
+    {:ok, chan} = rabbitmq_connect()
     {:noreply, chan}
   end
 
@@ -58,8 +63,8 @@ defmodule Node1.AmqpConsumer do
 
       {:error, _} ->
         # Reconnection loop
-        :timer.sleep(10000)
-        rabbitmq_connect
+        :timer.sleep(10_000)
+        rabbitmq_connect()
     end
   end
 

@@ -1,4 +1,8 @@
 defmodule Node1 do
+  @moduledoc """
+  Application supervisor module. Starts consumer and poller processes.
+  """
+
   use Application
 
   def start(_type, _args) do
