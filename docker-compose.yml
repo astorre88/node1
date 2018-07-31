@@ -14,9 +14,7 @@ services:
       - "15672:15672"
       - "5672:5672"
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: https://astorre@bitbucket.org/astorre/node1.git
     depends_on:
       - db
       - rabbit
@@ -24,9 +22,7 @@ services:
       - BOT_TOKEN=$BOT_TOKEN
       - TELEGRAM_CHANNEL_ID=$TELEGRAM_CHANNEL_ID
   app2:
-    build:
-      context: ../../phoenix/node2
-      dockerfile: Dockerfile
+    build: https://astorre@bitbucket.org/astorre/node2.git
     ports:
       - "4000:80"
     depends_on:
